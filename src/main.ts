@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import session from 'express-session';
 import { ValidationPipe } from '@nestjs/common';
 import { ResponseInterceptor } from './response/response.interceptor';
+import { AllExceptionsFilter } from './all-exceptions/all-exceptions.filter';
 
 
 async function bootstrap() {
@@ -26,6 +27,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(
   new ResponseInterceptor()
 );
+app.useGlobalFilters(new AllExceptionsFilter());
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
