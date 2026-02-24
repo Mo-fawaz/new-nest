@@ -39,6 +39,7 @@ model Post {
   author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   comments  Comment[]
+  images    PostImage[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -56,4 +57,18 @@ model Comment {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model PostImage {
+  id        Int   @id @default(autoincrement())
+
+  url       String
+  caption   String?
+
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
 }

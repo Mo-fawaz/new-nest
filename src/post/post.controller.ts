@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -13,16 +23,16 @@ export class PostController {
 
   @Post('add-post')
   @UseGuards(JwtGuard)
-  create( 
-    @GetUser('sub') MyID: number,
-    @Body() createPostDto: CreatePostDto) {
+  create(@GetUser('sub') MyID: number, @Body() createPostDto: CreatePostDto) {
     return this.postService.create(createPostDto, MyID);
   }
+
   @UseGuards(JwtGuard)
   @Post('add-comment')
-  createComment( 
+  createComment(
     @GetUser('sub') MyID: number,
-    @Body() CreateCommentDto: CreateCommentDto) {
+    @Body() CreateCommentDto: CreateCommentDto,
+  ) {
     return this.postService.createComment(CreateCommentDto, MyID);
   }
 
@@ -42,33 +52,33 @@ export class PostController {
   @Patch('update-post/:id')
   update(
     @GetUser('sub') MyID: number,
-    @Param('id') id: string, 
-    @Body() updatePostDto: UpdatePostDto) {
+    @Param('id') id: string,
+    @Body() updatePostDto: UpdatePostDto,
+  ) {
     return this.postService.update(+id, updatePostDto, MyID);
   }
 
   @UseGuards(JwtGuard)
-    @Patch('update-comment/:id')
+  @Patch('update-comment/:id')
   updateComment(
-    @GetUser('sub') MyId:number, 
-    @Param('id') id: number, 
-    @Body() UpdateCommentDto: UpdateCommentDto) {
+    @GetUser('sub') MyId: number,
+    @Param('id') id: number,
+    @Body() UpdateCommentDto: UpdateCommentDto,
+  ) {
     return this.postService.updateComment(+id, UpdateCommentDto, MyId);
   }
 
   @UseGuards(JwtGuard)
   @Delete('delete-post/:id')
-  remove(
-    @Param('id', ParseIntPipe) id: number,
-    @GetUser('sub') MyId: number
-  ) {
+  remove(@Param('id', ParseIntPipe) id: number, @GetUser('sub') MyId: number) {
     return this.postService.remove(+id, MyId);
   }
+
   @UseGuards(JwtGuard)
-    @Delete('delete-comment/:id')
+  @Delete('delete-comment/:id')
   delete(
     @Param('id', ParseIntPipe) commentId: number,
-    @GetUser('sub') userId: number
+    @GetUser('sub') userId: number,
   ) {
     return this.postService.removeComment(commentId, userId);
   }

@@ -7,38 +7,23 @@ import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
-
   constructor(private authService: AuthService) {}
 
- @Post('login')
-login(
-  @Req() req: any,
-  @Body() dto: LoginDto,
-) {
-  return this.authService.login(
-    req,
-    dto
-  );
-}
-
-@Post('register')
-register(
-  @Req() req: any,
-  @Body() dto: RegisterDto,
-) {
-  return this.authService.register(
-    req,
-    dto
-  );
-}
-@Get('profile')
-  @UseGuards(JwtGuard)
-  profile(@GetUser() user: any) {
-
-    return {
-     user
-    };
-
+  @Post('login')
+  login(@Req() req: any, @Body() dto: LoginDto) {
+    return this.authService.login(req, dto);
   }
 
+  @Post('register')
+  register(@Req() req: any, @Body() dto: RegisterDto) {
+    return this.authService.register(req, dto);
+  }
+
+  @Get('profile')
+  @UseGuards(JwtGuard)
+  profile(@GetUser() user: any) {
+    return {
+      user,
+    };
+  }
 }

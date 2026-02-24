@@ -1,15 +1,36 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreatePostDto } from './create-post.dto';
-import { IsOptional, IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export class UpdatePostDto extends PartialType(CreatePostDto) {
+export class UpdatePostImageDto {
 
-        @IsString()
-        @IsOptional()
-        title: string; 
-    
-        
-        @IsString()
-        @IsOptional()
-        content: string;
+  @IsOptional()
+  id?: number;
+
+  @IsString()
+  url: string;
+
+  @IsOptional()
+  @IsString()
+  caption?: string;
+
+}
+
+export class UpdatePostDto {
+
+  @IsString()
+  @IsOptional()
+  title?: string;
+
+  @IsString()
+  @IsOptional()
+  content?: string;
+
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => UpdatePostImageDto)
+  images: UpdatePostImageDto[];
+
 }
