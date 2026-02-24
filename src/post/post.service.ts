@@ -18,7 +18,6 @@ export class PostService {
     if (!myId) throw new UnauthorizedException();
     try {
       const result = await this.prisma.$transaction(async (tx) => {
-        
         const post = await tx.post.create({
           data: {
             title: dto.title,
@@ -132,43 +131,39 @@ export class PostService {
       await tx.post.update({
         where: { id: id },
         data: {
-          title: dto.title,
-          content: dto.content,
+          ...(dto.title !== undefined && { title: dto.title }),
+          ...(dto.content !== undefined && { content: dto.content }),
         },
       });
-      if (dto.images?.length) {
-        const incomingIds = dto.images
-          .map((img) => img.id)
-          .filter((id): id is number => id !== undefined);
-
+      if (dto.create?.length) {
+        await tx.postImage.createMany({
+          data: dto.create.map((img) => ({
+            url: img.url,
+            caption: img.caption,
+            postId: id,
+          })),
+        });
+      }
+      if (dto.update?.length) {
+        for (const img of dto.update) {
+          await tx.postImage.update({
+            where: { id: img.id },
+            data: {
+              ...(img.url !== undefined && { url: img.url }),
+              ...(img.caption !== undefined && { text: img.caption }),
+            },
+          });
+        }
+      }
+      if (dto.delete?.length) {
         await tx.postImage.deleteMany({
           where: {
-            postId: id,
             id: {
-              notIn: incomingIds.length ? incomingIds : [],
+              in: dto.delete.map((img) => img.id),
             },
+            postId: id,
           },
         });
-
-        for (const img of dto.images) {
-          if (img.id) {
-            await tx.postImage.update({
-              where: { id: img.id },
-              data: {
-                url: img.url,
-                caption: img.caption,
-              },
-            });
-          } else {
-            await tx.postImage.create({
-              data: {
-                url: img.url,
-                caption: img.caption,
-                postId: id,
-              },
-            });
-          }
-        }
       }
       return tx.post.findUnique({
         where: { id: id },

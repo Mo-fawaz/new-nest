@@ -1,12 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreatePostDto } from './create-post.dto';
-import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsOptional, IsString, IsArray, ValidateNested, IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class UpdatePostImageDto {
-
-  @IsOptional()
-  id?: number;
+export class CreatePostImageDto {
 
   @IsString()
   url: string;
@@ -17,20 +12,55 @@ export class UpdatePostImageDto {
 
 }
 
+export class UpdatePostImageDto {
+
+
+    @IsNumber()
+  id: number;
+
+  @IsOptional()
+  @IsString()
+  url?: string;
+
+  @IsOptional()
+  @IsString()
+  caption?: string;
+
+}
+
+export class DeletePostImageDto {
+
+    @IsNumber()
+  id: number;
+
+}
+
 export class UpdatePostDto {
 
-  @IsString()
   @IsOptional()
+  @IsString()
   title?: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   content?: string;
 
-  @IsArray()
   @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreatePostImageDto)
+  create?: CreatePostImageDto[];
+
+  @IsOptional()
+  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdatePostImageDto)
-  images: UpdatePostImageDto[];
+  update?: UpdatePostImageDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => DeletePostImageDto)
+  delete?: DeletePostImageDto[];
 
 }
