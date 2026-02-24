@@ -18,7 +18,7 @@ export class PostService {
     if (!myId) throw new UnauthorizedException();
     try {
       const result = await this.prisma.$transaction(async (tx) => {
-        // إنشاء البوست
+        
         const post = await tx.post.create({
           data: {
             title: dto.title,
